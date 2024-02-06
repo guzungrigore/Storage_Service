@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <!--Added entity User-->
+    <changeSet id="20240206121549-1" author="grigore">
+        <createTable tableName="user">
+            <column name="id" type="int8" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="login" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password_hash" type="varchar(60)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(191)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_url" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="activated" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lang_key" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="activation_key" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reset_key" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reset_date" type="timestamp"/>
+            <column name="last_modified_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20240206122012-2" author="grigore">
+        <createTable tableName="authority">
+            <column name="name" type="varchar(50)">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20240206123102-3" author="grigore">
+
+        <createTable tableName="storage_file">
+            <column name="id" type="int8">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="size" type="int8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mime_type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="path" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20240206123857-4" author="grigore">
+        <createTable tableName="user_reservation">
+            <column name="id" type="int8" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="total_size" type="int8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="used_size" type="int8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="int8">
+                <constraints nullable="false"/>
+            </column>
+            <column name="activated" type="bool">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20240206125734-5" author="grigore">
+        <createTable tableName="user_authority">
+            <column name="user_id" type="int8">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+            <column name="authority_name" type="varchar(50)">
+                <constraints primaryKey="true" nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="20240206141414-5" author="grigore">
+        <addForeignKeyConstraint
+                baseTableName="user_reservation"
+                baseColumnNames="user_id"
+                constraintName="fk_user_reservation"
+                referencedTableName="user"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20240206141818-6" author="grigore">
+        <addForeignKeyConstraint
+                baseTableName="storage_file"
+                baseColumnNames="created_by"
+                constraintName="fk_user_login"
+                referencedTableName="user"
+                referencedColumnNames="login"/>
+    </changeSet>
+
+    <changeSet id="20240206142011-7" author="grigore">
+        <addForeignKeyConstraint
+                baseTableName="user_authority"
+                baseColumnNames="user_id"
+                constraintName="fk_user_id"
+                referencedTableName="user"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="20240206142139-8" author="grigore">
+        <addForeignKeyConstraint
+                baseTableName="user_authority"
+                baseColumnNames="authority_name"
+                constraintName="fk_authority_name"
+                referencedTableName="authority"
+                referencedColumnNames="name"/>
+    </changeSet>
+
+</databaseChangeLog>
