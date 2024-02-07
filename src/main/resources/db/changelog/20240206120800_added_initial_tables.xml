@@ -10,7 +10,7 @@
     <!--Added entity User-->
     <changeSet id="20240206121549-1" author="grigore">
         <createTable tableName="user">
-            <column name="id" type="int8" autoIncrement="true">
+            <column name="id" type="bigserial" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
             <column name="login" type="varchar(50)">
@@ -70,13 +70,13 @@
     <changeSet id="20240206123102-3" author="grigore">
 
         <createTable tableName="storage_file">
-            <column name="id" type="int8">
+            <column name="id" type="bigserial">
                 <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="size" type="int8">
+            <column name="size" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="mime_type" type="varchar(255)">
@@ -96,16 +96,16 @@
 
     <changeSet id="20240206123857-4" author="grigore">
         <createTable tableName="user_reservation">
-            <column name="id" type="int8" autoIncrement="true">
+            <column name="id" type="bigserial" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
-            <column name="total_size" type="int8">
+            <column name="total_size" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="used_size" type="int8">
+            <column name="used_size" type="bigint">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="int8">
+            <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
             <column name="activated" type="bool">
@@ -122,7 +122,7 @@
 
     <changeSet id="20240206125734-5" author="grigore">
         <createTable tableName="user_authority">
-            <column name="user_id" type="int8">
+            <column name="user_id" type="bigint">
                 <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
             <column name="authority_name" type="varchar(50)">
