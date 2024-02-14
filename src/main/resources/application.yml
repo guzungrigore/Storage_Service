@@ -6,3 +6,9 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
   liquibase:
     change-log: classpath:db/master.xml
+
+storage:
+  minio:
+    url: http://localhost:9000
+    root-user: admin
+    root-password: Secure123$

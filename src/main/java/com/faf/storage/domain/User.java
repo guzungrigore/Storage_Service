@@ -3,6 +3,7 @@ package com.faf.storage.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -71,10 +72,10 @@ public class User {
     @Column(name = "last_modified_date", nullable = false)
     private Instant lastModifiedDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserReservation userReservation;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL )
     private List<StorageFile> storageFiles;
 
     @ManyToMany
@@ -211,6 +212,14 @@ public class User {
 
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Set<Authority> getRoles() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
