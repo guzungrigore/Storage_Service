@@ -2,7 +2,7 @@ package com.faf.storage.controller;
 
 import com.faf.storage.dto.ResponseDto;
 import com.faf.storage.dto.StorageDto;
-import com.faf.storage.service.api.StorageService;
+import com.faf.storage.service.StorageService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

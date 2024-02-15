@@ -1,9 +1,10 @@
 package com.faf.storage.domain;
 
+import com.faf.storage.util.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,80 +12,96 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.BatchSize;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "user", schema = "public")
+public class User extends AbstractAuditingEntity<Long> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @NotNull
+    @Pattern(regexp = Constants.LOGIN_REGEX)
+    @Size(min = 1, max = 50)
+    @Column(length = 50, unique = true, nullable = false)
     private String login;
 
-    @Column(name = "password_hash", nullable = false, length = 60)
-    private String passwordHash;
+    @JsonIgnore
+    @NotNull
+    @Size(min = 60, max = 60)
+    @Column(name = "password_hash", length = 60, nullable = false)
+    private String password;
 
-    @Column(name = "first_name", nullable = false, length = 50)
+    @Size(max = 50)
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false, length = 50)
+    @Size(max = 50)
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(nullable = false, unique = true, length = 191)
+    @Email
+    @Size(min = 5, max = 254)
+    @Column(length = 254, unique = true)
     private String email;
 
-    @Column(name = "image_url", nullable = false, length = 256)
-    private String imageUrl;
-
+    @NotNull
     @Column(nullable = false)
-    private Boolean activated;
+    private boolean activated = false;
 
-    @Column(name = "lang_key", nullable = false, length = 10)
+    @Size(min = 2, max = 10)
+    @Column(name = "lang_key", length = 10)
     private String langKey;
 
-    @Column(name = "activation_key", nullable = false, length = 20)
+    @Size(max = 256)
+    @Column(name = "image_url", length = 256)
+    private String imageUrl;
+
+    @Size(max = 20)
+    @Column(name = "activation_key", length = 20)
+    @JsonIgnore
     private String activationKey;
 
-    @Column(name = "reset_key", nullable = false, length = 20)
+    @Size(max = 20)
+    @Column(name = "reset_key", length = 20)
+    @JsonIgnore
     private String resetKey;
 
-    @Column(name = "created_by", nullable = false, length = 50)
-    private String createdBy;
+    @Column(name = "reset_date")
+    private Instant resetDate = null;
 
-    @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
-
-    @Column(name = "reset_date", nullable = false)
-    private Instant resetDate;
-
-    @Column(name = "last_modified_by", nullable = false, length = 50)
-    private String lastModifiedBy;
-
-    @Column(name = "last_modified_date", nullable = false)
-    private Instant lastModifiedDate;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserReservation userReservation;
-
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL )
     private List<StorageFile> storageFiles;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "user_authority",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_name")
+            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "authority_name", referencedColumnName = "name") }
     )
-    private Set<Authority> authorities;
+    @BatchSize(size = 20)
+    private Set<Authority> authorities = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -98,16 +115,17 @@ public class User {
         return login;
     }
 
+    // Lowercase the login before saving it in database
     public void setLogin(String login) {
-        this.login = login;
+        this.login = StringUtils.lowerCase(login, Locale.ENGLISH);
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {
@@ -142,20 +160,12 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
-    public Boolean getActivated() {
+    public boolean isActivated() {
         return activated;
     }
 
-    public void setActivated(Boolean activated) {
+    public void setActivated(boolean activated) {
         this.activated = activated;
-    }
-
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public void setLangKey(String langKey) {
-        this.langKey = langKey;
     }
 
     public String getActivationKey() {
@@ -174,22 +184,6 @@ public class User {
         this.resetKey = resetKey;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Instant createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public Instant getResetDate() {
         return resetDate;
     }
@@ -198,23 +192,23 @@ public class User {
         this.resetDate = resetDate;
     }
 
-    public String getLastModifiedBy() {
-        return lastModifiedBy;
+    public String getLangKey() {
+        return langKey;
     }
 
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
+    public void setLangKey(String langKey) {
+        this.langKey = langKey;
     }
 
-    public Instant getLastModifiedDate() {
-        return lastModifiedDate;
+    public List<StorageFile> getStorageFiles() {
+        return storageFiles;
     }
 
-    public void setLastModifiedDate(Instant lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+    public void setStorageFiles(List<StorageFile> storageFiles) {
+        this.storageFiles = storageFiles;
     }
 
-    public Set<Authority> getRoles() {
+    public Set<Authority> getAuthorities() {
         return authorities;
     }
 
@@ -224,36 +218,33 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(passwordHash, user.passwordHash) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(imageUrl, user.imageUrl) && Objects.equals(activated, user.activated) && Objects.equals(langKey, user.langKey) && Objects.equals(activationKey, user.activationKey) && Objects.equals(resetKey, user.resetKey) && Objects.equals(createdBy, user.createdBy) && Objects.equals(createdDate, user.createdDate) && Objects.equals(resetDate, user.resetDate) && Objects.equals(lastModifiedBy, user.lastModifiedBy) && Objects.equals(lastModifiedDate, user.lastModifiedDate);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+        return id != null && id.equals(((User) o).id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, passwordHash, firstName, lastName, email, imageUrl, activated, langKey, activationKey, resetKey, createdBy, createdDate, resetDate, lastModifiedBy, lastModifiedDate);
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
+                "login='" + login + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
-                ", activated=" + activated +
+                ", activated='" + activated + '\'' +
                 ", langKey='" + langKey + '\'' +
                 ", activationKey='" + activationKey + '\'' +
-                ", resetKey='" + resetKey + '\'' +
-                ", createdBy='" + createdBy + '\'' +
-                ", createdDate=" + createdDate +
-                ", resetDate=" + resetDate +
-                ", lastModifiedBy='" + lastModifiedBy + '\'' +
-                ", lastModifiedDate=" + lastModifiedDate +
-                '}';
+                "}";
     }
 }

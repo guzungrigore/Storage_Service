@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
 
     <!--Added entity User-->
@@ -14,7 +13,7 @@
                 <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
             <column name="login" type="varchar(50)">
-                <constraints nullable="false" unique="true"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_user_login"/>
             </column>
             <column name="password_hash" type="varchar(60)">
                 <constraints nullable="false"/>
@@ -26,36 +25,24 @@
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="varchar(191)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_user_email"/>
+            </column>
+            <column name="image_url" type="varchar(256)"/>
+            <column name="activated" type="bool" valueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="image_url" type="varchar(256)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="activated" type="bool">
-                <constraints nullable="false"/>
-            </column>
-            <column name="lang_key" type="varchar(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="activation_key" type="varchar(20)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="reset_key" type="varchar(20)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="lang_key" type="varchar(10)"/>
+            <column name="activation_key" type="varchar(20)"/>
+            <column name="reset_key" type="varchar(20)"/>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_date" type="timestamp">
-                <constraints nullable="false"/>
+            <column name="created_date" type="timestamp"/>
+            <column name="reset_date" type="timestamp">
+                <constraints nullable="true"/>
             </column>
-            <column name="reset_date" type="timestamp"/>
-            <column name="last_modified_by" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_modified_date" type="timestamp">
-                <constraints nullable="false"/>
-            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp"/>
         </createTable>
     </changeSet>
 
@@ -123,12 +110,14 @@
     <changeSet id="20240206125734-5" author="grigore">
         <createTable tableName="user_authority">
             <column name="user_id" type="bigint">
-                <constraints primaryKey="true" nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
             <column name="authority_name" type="varchar(50)">
-                <constraints primaryKey="true" nullable="false" unique="true"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addPrimaryKey tableName="user_authority" columnNames="user_id, authority_name"/>
     </changeSet>
 
     <changeSet id="20240206141414-5" author="grigore">
