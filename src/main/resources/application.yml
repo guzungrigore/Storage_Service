@@ -6,9 +6,25 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
   liquibase:
     change-log: classpath:db/master.xml
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: grigoreguzun01@gmail.com
+    password: ctho ukfb vxtm jbsy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  messages:
+    basename: i18n/messages
 
 storage:
   minio:
     url: http://localhost:9000
     root-user: admin
     root-password: Secure123$
+  mail:
+    from: grigoreguzun01@gmail.com
+    base-url: http://localhost:8080

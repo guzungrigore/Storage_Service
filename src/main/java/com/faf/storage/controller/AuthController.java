@@ -1,8 +1,6 @@
 package com.faf.storage.controller;
 
-import com.faf.storage.dto.ResponseDto;
 import com.faf.storage.dto.request.LoginRequest;
-import com.faf.storage.dto.request.SignUpRequest;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +17,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
@@ -30,7 +27,6 @@ import static com.faf.storage.util.SecurityUtils.AUTHORITIES_KEY;
 import static com.faf.storage.util.SecurityUtils.JWT_ALGORITHM;
 
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
 
 
@@ -44,13 +40,8 @@ public class AuthController {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    @PostMapping("/singUp")
-    public ResponseEntity<ResponseDto> singUp(@RequestBody @Valid SignUpRequest signupRequest) {
-        return null;
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<JWTToken> login(@RequestBody @Valid LoginRequest loginRequest) {
+    @PostMapping("/sign-in")
+    public ResponseEntity<JWTToken> signIn(@RequestBody @Valid LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginRequest.username(), loginRequest.password()
         );

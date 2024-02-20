@@ -90,7 +90,7 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     private Instant resetDate = null;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL )
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<StorageFile> storageFiles;
 
     @JsonIgnore

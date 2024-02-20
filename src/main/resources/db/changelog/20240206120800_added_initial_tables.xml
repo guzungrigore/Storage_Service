@@ -78,6 +78,9 @@
             <column name="created_date" type="timestamp">
                 <constraints nullable="false"/>
             </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -154,6 +157,15 @@
                 constraintName="fk_authority_name"
                 referencedTableName="authority"
                 referencedColumnNames="name"/>
+    </changeSet>
+
+    <changeSet id="20240206142155-9" author="grigore">
+        <addForeignKeyConstraint
+                baseTableName="storage_file"
+                baseColumnNames="user_id"
+                constraintName="fk_storage_file_user_id"
+                referencedTableName="user"
+                referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

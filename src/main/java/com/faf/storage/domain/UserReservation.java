@@ -2,15 +2,20 @@ package com.faf.storage.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "user_reservation")
 public class UserReservation {
@@ -28,11 +33,13 @@ public class UserReservation {
     @Column(nullable = false)
     private Boolean activated;
 
+    @CreatedBy
     @Column(name = "created_by", nullable = false, length = 50)
     private String createdBy;
 
+    @CreatedDate
     @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
+    private Instant createdDate = Instant.now();
 
     @OneToOne
     private User user;
