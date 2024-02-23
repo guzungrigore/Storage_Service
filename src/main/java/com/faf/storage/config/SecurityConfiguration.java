@@ -59,7 +59,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth ->
                         // prettier-ignore
                         auth
-                                .requestMatchers("/sign-in", "user/sign-up").permitAll()
+                                .requestMatchers("/sign-in", "user/sign-up", "user/activate").permitAll()
+                                .requestMatchers("/file/upload").authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions ->

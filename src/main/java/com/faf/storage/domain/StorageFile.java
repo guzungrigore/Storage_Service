@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -34,8 +35,9 @@ public class StorageFile {
     @Column(name = "created_by", nullable = false, length = 50)
     private String createdBy;
 
+    @CreatedDate
     @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
+    private Instant createdDate = Instant.now();
 
     @ManyToOne
     private User user;
