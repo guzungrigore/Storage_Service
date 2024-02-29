@@ -6,7 +6,7 @@ import io.minio.MinioClient;
 import io.minio.errors.MinioException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @Component
-public class MainBucketCreationListener implements ApplicationListener<ContextStartedEvent> {
+public class MainBucketCreationListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private final MinioClient minioClient;
 
@@ -26,7 +26,8 @@ public class MainBucketCreationListener implements ApplicationListener<ContextSt
     }
 
     @Override
-    public void onApplicationEvent(@NotNull ContextStartedEvent event) {
+    public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
+        System.out.println("TEST283495725982376523985634");
         try {
             String mainBucket = appProperties.minio().mainBucket();
             boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(mainBucket).build());

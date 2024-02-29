@@ -1,5 +1,6 @@
 package com.faf.storage.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,6 +40,7 @@ public class StorageFile {
     @Column(name = "created_date", nullable = false)
     private Instant createdDate = Instant.now();
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 

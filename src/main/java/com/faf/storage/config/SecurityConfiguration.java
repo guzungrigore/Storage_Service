@@ -60,7 +60,7 @@ public class SecurityConfiguration {
                         // prettier-ignore
                         auth
                                 .requestMatchers("/sign-in", "user/sign-up", "user/activate").permitAll()
-                                .requestMatchers("/file/upload").authenticated()
+                                .requestMatchers("/file/**").authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions ->

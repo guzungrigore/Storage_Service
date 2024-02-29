@@ -1,15 +1,17 @@
 //package com.faf.storage.config;
 //
+//import jakarta.servlet.MultipartConfigElement;
+//import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
-//import org.springframework.web.multipart.MultipartResolver;
-//import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 //
 //@Configuration
 //public class MyConfig {
 //
 //    @Bean
-//    public MultipartResolver multipartResolver() {
-//        return new StandardServletMultipartResolver();
+//    @ConditionalOnMissingBean({ MultipartConfigElement.class,
+//            CommonsMultipartResolver.class })
+//    public MultipartConfigElement multipartConfigElement() {
+//        return this.multipartProperties.createMultipartConfig();
 //    }
 //}

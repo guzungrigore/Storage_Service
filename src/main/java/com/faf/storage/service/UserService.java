@@ -1,5 +1,6 @@
 package com.faf.storage.service;
 
+import com.faf.storage.config.AppProperties;
 import com.faf.storage.domain.Authority;
 import com.faf.storage.domain.User;
 import com.faf.storage.domain.UserReservation;
@@ -11,9 +12,7 @@ import com.faf.storage.repository.UserRepository;
 import com.faf.storage.repository.UserReservationRepository;
 import com.faf.storage.security.AuthoritiesConstants;
 import com.faf.storage.util.RandomUtil;
-import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import io.minio.errors.MinioException;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -45,14 +41,17 @@ public class UserService {
 
     private final MinioClient minioClient;
 
+    private final AppProperties appProperties;
+
     public UserService(UserReservationRepository reservationRepository, UserRepository userRepository,
                        PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository,
-                       MinioClient minioClient) {
+                       MinioClient minioClient, AppProperties appProperties) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.minioClient = minioClient;
+        this.appProperties = appProperties;
     }
 
     public User signUp(SignUpRequest request) {
@@ -119,14 +118,6 @@ public class UserService {
                     user.setActivated(true);
                     user.setActivationKey(null);
                     log.debug("Activated user: {}", user);
-
-                    //Create User Bucket
-                    try {
-                        String userBucket = user.getLogin();
-                        minioClient.makeBucket(MakeBucketArgs.builder().bucket(userBucket).build());
-                    } catch (MinioException | InvalidKeyException | IOException | NoSuchAlgorithmException e) {
-                        throw new RuntimeException(e);
-                    }
 
                     return user;
                 });
