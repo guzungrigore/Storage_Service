@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  app:
+    image: grigoreguzun/storage:latest # Replace with your actual application image
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - minio
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/storage
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      STORAGE_MINIO_URL: http://minio:9000
+      STORAGE_MINIO_ROOT_USER: admin
+      STORAGE_MINIO_ROOT_PASSWORD: Secure123$
+      STORAGE_MAIL_FROM: grigoreguzun01@gmail.com
+      STORAGE_MAIL_BASE_URL: http://localhost:8080 # Adjust this if needed
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: storage
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  minio:
+    image: minio/minio
+    command: server /data
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: Secure123$
+    ports:
+      - "9000:9000"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  postgres_data:
+  minio_data:

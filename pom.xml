@@ -15,6 +15,9 @@
     <description>Demo storage service</description>
     <properties>
         <java.version>17</java.version>
+        <jib-maven-plugin.architecture>amd64</jib-maven-plugin.architecture>
+        <jib-maven-plugin.image>eclipse-temurin:17-jre-focal</jib-maven-plugin.image>
+        <jib-maven-plugin.version>3.4.0</jib-maven-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -62,7 +65,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.minio/minio -->
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
@@ -121,7 +123,6 @@
             <type>pom</type>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
@@ -138,7 +139,59 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>${jib-maven-plugin.version}</version>
+                    <configuration>
+                        <from>
+                            <image>${jib-maven-plugin.image}</image>
+                            <platforms>
+                                <platform>
+                                    <architecture>${jib-maven-plugin.architecture}</architecture>
+                                    <os>linux</os>
+                                </platform>
+                            </platforms>
+                        </from>
+                        <to>
+                            <image>docker.io/grigoreguzun/storage:latest</image>
+                        </to>
+                        <container>
+<!--                            <entrypoint>-->
+<!--                                <shell>bash</shell>-->
+<!--                                <option>-c</option>-->
+<!--                                <arg>/entrypoint.sh</arg>-->
+<!--                            </entrypoint>-->
+                            <ports>
+                                <port>8081</port>
+                            </ports>
+<!--                            <environment>-->
+<!--                                <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>-->
+<!--                                <JHIPSTER_SLEEP>0</JHIPSTER_SLEEP>-->
+<!--                            </environment>-->
+<!--                            <creationTime>USE_CURRENT_TIMESTAMP</creationTime>-->
+<!--                            <user>1000</user>-->
+                        </container>
+<!--                        <extraDirectories>-->
+<!--                            <paths>src/main/docker/jib</paths>-->
+<!--                            <permissions>-->
+<!--                                <permission>-->
+<!--                                    <file>/entrypoint.sh</file>-->
+<!--                                    <mode>755</mode>-->
+<!--                                </permission>-->
+<!--                            </permissions>-->
+<!--                        </extraDirectories>-->
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>
