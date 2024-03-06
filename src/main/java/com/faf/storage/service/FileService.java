@@ -10,6 +10,7 @@ import com.faf.storage.exception.NotEnoughSpaceException;
 import com.faf.storage.repository.StorageFileRepository;
 import com.faf.storage.repository.UserRepository;
 import com.faf.storage.repository.UserReservationRepository;
+import com.faf.storage.service.strategy.FileStrategy;
 import com.faf.storage.util.SecurityUtils;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,13 +42,20 @@ public class FileService {
 
     private final MinioClient minioClient;
 
-    public FileService(UserReservationRepository userReservationRepository, StorageFileRepository fileRepository,
-                       UserRepository userRepository, MinioClient minioClient, AppProperties appProperties) {
+    private final List<FileStrategy> strategies;
+
+    public FileService(UserReservationRepository userReservationRepository,
+                       StorageFileRepository fileRepository,
+                       UserRepository userRepository,
+                       MinioClient minioClient,
+                       AppProperties appProperties,
+                       List<FileStrategy> strategies) {
         this.fileRepository = fileRepository;
         this.userRepository = userRepository;
         this.minioClient = minioClient;
         this.userReservationRepository = userReservationRepository;
         this.appProperties = appProperties;
+        this.strategies = strategies;
     }
 
     public ResponseDto uploadFile(MultipartFile request) {
@@ -146,4 +155,47 @@ public class FileService {
             throw new RuntimeException("Failed to download file", e);
         }
     }
+
+    public byte[] downloadReport(String fileType) {
+
+        for (FileStrategy strategy : strategies) {
+            if (strategy.supports(fileType)) {
+                return strategy.generateFile();
+            }
+        }
+        throw new IllegalArgumentException("Unsupported format: " + fileType);
+    }
+
+
+
+
+//    @Component
+//    private class PdfFileStrategy implements FileStrategy {
+//        @Override
+//        public byte[] generateFile() {
+//            return null;
+//        }
+//
+//        @Override
+//        public boolean supports(String format) {
+//            return "pdf".equalsIgnoreCase(format);
+//        }
+//    }
+//
+//    @Component
+//    private class CsvFileStrategy implements FileStrategy {
+//        // Implement the methods
+//        @Override
+//        public byte[] generateFile() {
+//            // CSV generation logic
+//            return null;
+//        }
+//
+//        @Override
+//        public boolean supports(String format) {
+//            return "csv".equalsIgnoreCase(format);
+//        }
+//    }
+
+
 }

@@ -113,4 +113,10 @@ public class MailService {
         log.debug("Sending password reset email to '{}'", user.getEmail());
         this.sendEmailFromTemplateSync(user, "mail/passwordResetEmail", "email.reset.title");
     }
+
+    @Async
+    public void sendStorageAlertEmail(User user) {
+        log.debug("Sending storage alert email to '{}'", user.getEmail());
+        this.sendEmailFromTemplateSync(user, "mail/storageAlert", "email.storageAlert.title");
+    }
 }

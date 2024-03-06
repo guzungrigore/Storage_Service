@@ -1,0 +1,24 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" lang="en">
+<head>
+    <title th:text="#{email.storageAlert.title}">Storage Limit Alert</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
+</head>
+<body>
+<p th:text="#{email.storageAlert.greeting(${user.login})}">Dear User,</p>
+<p th:text="#{email.storageAlert.text1}">You are nearing the limit of your storage capacity. Over 90% of your storage
+    space has been used.</p>
+<p th:text="#{email.storageAlert.text2}">To avoid any service interruptions or limitations, please consider reviewing
+    your stored files and deleting any unnecessary items or upgrading your storage plan.</p>
+<p>
+    <a th:with="url=(@{|${baseUrl}/user/storage|})" th:href="${url}" th:text="#{email.storageAlert.linkText}">Manage
+        Storage</a>
+</p>
+<p>
+    <span th:text="#{email.storageAlert.text3}">Thank you for using our services,</span>
+    <br/>
+    <em th:text="#{email.signature}">The StorageApplication Team</em>
+</p>
+</body>
+</html>

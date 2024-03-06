@@ -34,3 +34,5 @@ storage:
   mail:
     from: grigoreguzun01@gmail.com
     base-url: http://localhost:8080
+  schedule:
+    cron: "0 0/20 * * * ?"

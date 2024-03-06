@@ -3,6 +3,7 @@ package com.faf.storage.controller;
 import com.faf.storage.domain.StorageFile;
 import com.faf.storage.dto.ResponseDto;
 import com.faf.storage.service.FileService;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,4 +55,28 @@ public class FileController {
         return ResponseEntity.status(OK).body(fileService.deleteFile(id));
     }
 
+
+    @GetMapping("/report/download/{fileType}")
+    public ResponseEntity<byte[]> downloadFilesReport(@PathVariable @NotEmpty String fileType) {
+        byte[] data = fileService.downloadReport(fileType);
+        String filename = "storage_report";
+
+        String contentType = getContentTypeByFileType(fileType);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(data);
+    }
+
+//    private String getFileExtension()
+
+    private String getContentTypeByFileType(String fileType) {
+        return switch (fileType.toLowerCase()) {
+            case "excel" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            case "pdf" -> "application/pdf";
+            case "csv" -> "text/csv";
+            default -> throw new IllegalArgumentException("Unsupported file type: " + fileType);
+        };
+    }
 }
